@@ -1078,6 +1078,8 @@ class MemeFinderApp(tk.Tk):
     def _refresh_manual_browser(self, refresh_folder_tree: bool = True) -> None:
         if not hasattr(self, "manual_body"):
             return
+        self.manual_tree = None
+        self.manual_flag_labels: Dict[int, tk.Label] = {}
         rows = self.store.list_all()
         folders = ["全部文件夹"] + sorted({str(Path(row["path"]).parent) for row in rows})
         if self.manual_folder_var.get() not in folders:
@@ -1128,6 +1130,8 @@ class MemeFinderApp(tk.Tk):
             return
         if mode == "列表":
             tree = ttk.Treeview(parent, columns=("meaning", "ai", "manual", "path"), show="tree headings")
+            if parent is getattr(self, "manual_body", None):
+                self.manual_tree = tree
             tree.heading("#0", text="文件")
             tree.heading("meaning", text="意义")
             tree.heading("ai", text="AI")
@@ -1191,7 +1195,10 @@ class MemeFinderApp(tk.Tk):
                 flags.append("AI")
             if row.get("manual_tagged"):
                 flags.append("人工")
-            tk.Label(cell, text=" / ".join(flags) if flags else "未标签", bg=SURFACE, fg=MUTED).pack(anchor=tk.W)
+            flag_label = tk.Label(cell, text=" / ".join(flags) if flags else "未标签", bg=SURFACE, fg=MUTED)
+            flag_label.pack(anchor=tk.W)
+            if parent is getattr(self, "manual_body", None):
+                self.manual_flag_labels[int(row["id"])] = flag_label
             cell.bind("<Button-1>", lambda _event, item=row: on_select(item))
             if on_double_select:
                 cell.bind("<Double-1>", lambda _event, item=row: on_double_select(item))
@@ -1230,15 +1237,67 @@ class MemeFinderApp(tk.Tk):
             return None
 
     def _select_manual_row(self, row: Dict[str, Any]) -> None:
+        row = self._fresh_manual_row(row)
         self.current_image_id = int(row["id"])
-        self.manual_index = next((index for index, item in enumerate(self.manual_rows) if int(item["id"]) == self.current_image_id), -1)
         for field, widget in self.field_widgets.items():
             widget.delete("1.0", tk.END)
             widget.insert("1.0", row.get(field) or "")
         self._load_manual_preview(row.get("path") or "")
+        self._update_manual_selection_status(row)
+
+    def _update_manual_selection_status(self, row: Dict[str, Any]) -> None:
         self.manual_status.configure(
             text=f"{self.manual_index + 1 if self.manual_index >= 0 else 0}/{len(self.manual_rows)}  AI：{'是' if row.get('ai_tagged') else '否'}  人工：{'是' if row.get('manual_tagged') else '否'}"
         )
+
+    def _fresh_manual_row(self, row: Dict[str, Any]) -> Dict[str, Any]:
+        image_id = int(row["id"])
+        fresh = self.store.get_image(image_id)
+        if not fresh:
+            self.manual_index = next((index for index, item in enumerate(self.manual_rows) if int(item["id"]) == image_id), -1)
+            return row
+        row.update(fresh)
+        self.manual_index = -1
+        for index, item in enumerate(self.manual_rows):
+            if int(item["id"]) == image_id:
+                item.update(fresh)
+                row = item
+                self.manual_index = index
+                break
+        return row
+
+    def _sync_current_manual_row(self) -> Optional[Dict[str, Any]]:
+        if self.current_image_id is None:
+            return None
+        row = self.store.get_image(self.current_image_id)
+        if not row:
+            return None
+        self.manual_index = -1
+        for index, item in enumerate(self.manual_rows):
+            if int(item["id"]) == self.current_image_id:
+                item.update(row)
+                row = item
+                self.manual_index = index
+                break
+        return row
+
+    def _update_manual_browser_item(self, row: Dict[str, Any]) -> None:
+        image_id = int(row["id"])
+        tree = getattr(self, "manual_tree", None)
+        if tree is not None and tree.winfo_exists() and tree.exists(str(image_id)):
+            tree.set(str(image_id), "meaning", str(row.get("image_meaning") or "")[:60])
+            tree.set(str(image_id), "manual", "是" if row.get("manual_tagged") else "否")
+            tree.selection_set(str(image_id))
+            tree.focus(str(image_id))
+            return
+        label = getattr(self, "manual_flag_labels", {}).get(image_id)
+        if label is not None and label.winfo_exists():
+            flags = []
+            if row.get("ai_tagged"):
+                flags.append("AI")
+            if row.get("manual_tagged"):
+                flags.append("人工")
+            label.configure(text=" / ".join(flags) if flags else "未标签")
 
     def _open_manual_from_row(self, row: Dict[str, Any]) -> None:
         self._show_manual_label()
@@ -1359,8 +1418,11 @@ class MemeFinderApp(tk.Tk):
         fields = {field: widget.get("1.0", tk.END).strip() for field, widget in self.field_widgets.items()}
         fields["manual_tagged"] = 1
         self.store.update_metadata(self.current_image_id, fields)
+        row = self._sync_current_manual_row()
+        if row:
+            self._update_manual_selection_status(row)
+            self._update_manual_browser_item(row)
         self.status_var.set("已保存人工标签。")
-        self._refresh_manual_browser()
 
     def _set_manual_view(self, mode: str) -> None:
         self.manual_view_var.set(mode)
