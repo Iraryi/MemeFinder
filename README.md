@@ -1,11 +1,35 @@
 # MemeFinder / 梗图搜查器
 
-**A local image-memory search tool for finding the exact meme, screenshot, reaction image, or visual reference you only vaguely remember.**  
-**一个本地图片记忆检索工具：用“我记得它大概长什么样、表达什么意思、图里有什么字”来找回那张图。**
+**Turn a folder full of forgotten images into a searchable visual memory library.**  
+**把一堆“想得起来一点、但找不到文件名”的图片，变成可以用文字、画面内容和含义快速检索的本地资料库。**
 
 [Download latest Setup / 下载最新版安装包](https://github.com/Iraryi/MemeFinder/releases/latest/download/MemeFinder-Setup.exe)
 
-> Private by design: MemeFinder builds a local searchable DATA library on your own machine. You decide whether to use OCR, AI tagging, manual tags, or imported tag data.
+<p align="center">
+  <img src="docs/screenshots/home-search.png" alt="MemeFinder home search screen" width="900">
+</p>
+
+---
+
+## Interface Preview / 界面预览
+
+| Build searchable DATA | Search by remembered words |
+| --- | --- |
+| <img src="docs/screenshots/batch-tagging.png" alt="Batch tagging and OCR progress" width="420"> | <img src="docs/screenshots/search-results.png" alt="Search results for tagged images" width="420"> |
+
+| Manual tagging and preview | Search scope management |
+| --- | --- |
+| <img src="docs/screenshots/manual-gallery.png" alt="Manual tagging gallery" width="420"> | <img src="docs/screenshots/search-scope.png" alt="Search scope management" width="420"> |
+
+| OCR and API settings | Image detail preview |
+| --- | --- |
+| <img src="docs/screenshots/automation-settings.png" alt="OCR and AI API settings" width="420"> | <img src="docs/screenshots/manual-preview-ocr.png" alt="Manual preview with OCR text" width="420"> |
+
+<p>
+  <sub>
+  Screenshot note: sample images shown in the screenshots are used only to demonstrate the interface, search behavior, OCR, and tagging workflow. Copyrights and other rights remain with their respective owners. The project does not claim ownership of those example images, and they are not distributed as a bundled dataset.
+  </sub>
+</p>
 
 ---
 
@@ -14,57 +38,50 @@
 
 ## 这是什么？
 
-梗图搜查器是一个面向普通用户的本地图片检索工具。它不是普通的文件名搜索，而是把图片整理成“可被记住的线索”：图片文字、画面物体、图片结构、图片意义、用户备注、标签状态等。
+梗图搜查器是一个本地图片检索工具。它适合管理梗图、聊天截图、表情包、资料截图、设计参考、手写笔记、游戏截图、视频帧等大量图片。
 
-你可以用很模糊的印象找图，例如：
+传统文件管理只能靠文件名和目录；梗图搜查器会给图片建立可搜索的“记忆字段”，例如图片里出现的文字、画面中有哪些物体、图片结构是什么、这张图大概表达什么、你自己补充的备注是什么。
 
-- “那张聊天截图里好像有一句很阴阳怪气的话”
-- “画面像表格，右边有个红色标注”
-- “一个适合表达尴尬、无语、反转的梗图”
-- “我记得这张图以前在某个目录，但后来整批图片搬家了”
+之后你就可以用很短的关键词找图，例如：
 
-## 它能做什么？
+- 表情包 无语
+- 聊天截图 红字
+- 手写笔记 极限
+- 古画 马
+- 狗 兄弟
+- 截图 表格
 
-- **本地 DATA 检索**：把图片路径、OCR 文字、AI 识图结果、手写备注保存到本机数据库。
-- **按意义找图**：不仅搜文件名，还能搜“图片意义”“情绪”“用途”“场景感”。
-- **批量标签**：批量 OCR 和可选 AI 识图，快速建立可搜索资料库。
-- **手动标签**：逐张浏览图片，补充文字、物体、结构、意义和备注。
-- **检索范围管理**：支持搜索根目录、黑名单、白名单预设、导入导出和重扫。
-- **数据导入导出**：完整 DATA、标签数据、检索范围都可以拆分管理。
-- **实验性标签数据编辑器**：Setup 中可选安装 Tag Data Editor - Experimental，用于批量修改导出的标签数据 JSON，例如批量迁移旧目录路径到新目录路径。
-- **便携模式**：可把数据保存在安装目录内，适合移动硬盘、同步盘或多设备迁移。
-- **卸载入口**：安装目录内包含 UNINSTALL.bat，默认保留 DATA，便携数据会先备份。
+## 主要功能
 
-## 用途有多广？
+- **图片文字标注**：记录图片中出现的文字，让截图、梗图、手写笔记、聊天记录都能被搜索。
+- **OCR 批量识别**：使用内置 OCR 流程批量提取图片文字，快速建立基础 DATA。
+- **大模型 API 批量标注**：可选接入 OpenAI-compatible 图像理解接口，让程序归纳图片里的物体、结构和含义。
+- **手动标注**：逐张浏览图片，手动补充“图片文字、图片物体、图片结构、图片意义、备注”。
+- **关键词搜索**：输入一个词，就能从已经标注过的图片中找到相关结果。
+- **范围管理**：可设置搜索目录、黑名单、白名单预设，避免把无关目录混入资料库。
+- **备份与迁移辅助**：完整 DATA、标签数据和检索范围可以导入导出；实验性 Tag Data Editor 可作为标签数据批量修正工具。
 
-它适合任何“图片很多，但你记不清文件名”的场景：
+## 基本流程
 
-- 梗图、表情包、反应图、聊天截图收藏
-- 社交媒体素材、截图证据、灵感图库
-- 设计参考、构图参考、UI 截图库
-- 漫画分镜、视频截图、游戏截图
-- 历史资料、新闻截图、研究图片、课程素材
-- 个人知识库里的图片附件和长期归档
+1. 安装并启动 MemeFinder。
+2. 第一次启动时选择语言。
+3. 在检索范围里添加你的图片目录。
+4. 进入批量标签，启用 OCR；如果需要更丰富的“物体、结构、意义”描述，可以配置大模型 API。
+5. 等待程序建立本地 DATA。
+6. 回到主界面输入关键词搜索。
+7. 对重要图片使用手动标签补充更准确的文字和备注。
 
-## 怎么使用？
+## 适合哪些场景？
 
-1. 在 Releases 下载 MemeFinder-Setup.exe。
-2. 运行安装器，选择普通模式或便携模式。
-3. 第一次启动正式软件时，先在 “请选择语言 / Please choose a language” 窗口中选择语言。
-4. 打开 “设置 > 检索范围”，添加要搜索的图片目录和黑名单。
-5. 进入 “批量标签”，点击开始建立 DATA。
-6. 回到主菜单或高级搜索，用关键词、画面元素、含义、备注来找图。
-7. 如果需要精修结果，进入 “手动标签” 给图片补充记忆。
+- 梗图和表情包收藏太多，想按含义或文字找图。
+- 聊天截图、网页截图、资料截图需要长期归档。
+- 手写笔记、课件截图、研究图片需要按关键词回忆。
+- 设计参考、UI 截图、视频帧、游戏截图需要快速定位。
+- 想把本地图片资料库整理成可搜索的个人视觉记忆库。
 
-## 打包开发版
+## 隐私说明
 
-    py -3.10 -m pip install -r requirements.txt
-    .\build.ps1
-    .\build_setup.ps1
-
-生成的发布安装包位于：
-
-    release\MemeFinder-Setup.exe
+MemeFinder 默认在本地建立 DATA。OCR、手动标注和搜索都可以在本机完成。只有当你主动启用并配置大模型 API 时，图片分析请求才会发送到你设置的接口。
 
 </details>
 
@@ -75,67 +92,68 @@
 
 ## What is MemeFinder?
 
-MemeFinder is a local image-memory search tool for people who remember the content, mood, structure, or meaning of an image better than its file name.
+MemeFinder is a local image search and annotation tool for large personal image collections: memes, chat screenshots, stickers, reference images, handwritten notes, game screenshots, video frames, and more.
 
-Instead of only indexing file names, it helps turn images into searchable memory clues: visible text, objects, visual structure, semantic meaning, personal notes, and tagging status.
+Instead of relying only on file names and folders, MemeFinder builds searchable memory fields for each image: visible text, objects, visual structure, semantic meaning, and your own notes.
 
-You can search with fuzzy memories such as:
+Then you can search with short memory-style keywords such as:
 
-- “a sarcastic chat screenshot with a short line of text”
-- “a table-like image with a red annotation on the right”
-- “a reaction image for embarrassment, silence, irony, or reversal”
-- “a whole image collection moved from one folder path to another”
+- reaction image awkward
+- chat screenshot red text
+- handwritten notes limit
+- old painting horse
+- dog meme
+- screenshot table
 
-## What can it do?
+## Core features
 
-- **Local searchable DATA**: stores image paths, OCR text, AI vision summaries, manual notes, and status flags locally.
-- **Meaning-based search**: search not only by file name, but also by mood, usage, visual structure, and semantic meaning.
-- **Batch tagging**: batch OCR and optional AI vision analysis to build a searchable image library.
+- **Text annotation for images**: store visible text so screenshots, memes, notes, and chat images become searchable.
+- **Batch OCR**: extract text from many images and build a local searchable DATA library.
+- **AI API tagging**: optionally connect an OpenAI-compatible vision API to summarize objects, structure, and meaning.
 - **Manual tagging**: browse images one by one and refine text, objects, structure, meaning, and notes.
-- **Search scope management**: root folders, blacklists, whitelist presets, import/export, and rescanning.
-- **Data import/export**: manage complete DATA, tag-data-only JSON, and search scopes separately.
-- **Experimental Tag Data Editor**: optional Setup component for batch-editing exported tag-data JSON files, including path-prefix migration.
-- **Portable mode**: keep data inside the install folder for removable drives, sync folders, or easy migration.
-- **Uninstall entry**: installed folders include UNINSTALL.bat; saved DATA is kept by default.
+- **Keyword search**: type a word and instantly find images whose annotations contain it.
+- **Search scope management**: configure root folders, blacklists, whitelist presets, and rescanning behavior.
+- **Backup and migration helpers**: DATA, tag data, and search scopes can be imported or exported; the experimental Tag Data Editor can help batch-fix exported tag data.
 
-## Why is it broadly useful?
+## Basic workflow
 
-MemeFinder is useful whenever you have lots of images but cannot remember their names:
+1. Install and launch MemeFinder.
+2. Choose a language on first launch.
+3. Add your image folders in Search Scope.
+4. Open Batch Tagging and enable OCR. Configure a vision API if you want richer object, structure, and meaning annotations.
+5. Let MemeFinder build the local DATA library.
+6. Search from the home page with remembered words.
+7. Use Manual Tagging to improve important images.
 
-- meme, sticker, reaction image, and chat screenshot collections
-- social media materials, visual evidence, inspiration boards
-- design references, layout references, UI screenshot libraries
-- comic panels, video frames, game screenshots
-- historical materials, news screenshots, research images, teaching resources
-- personal knowledge-base attachments and long-term visual archives
+## Good use cases
 
-## How to use it
+- Find memes and reaction images by text, mood, or meaning.
+- Archive chat screenshots, web screenshots, and information screenshots.
+- Search handwritten notes, course screenshots, research images, and visual materials.
+- Manage design references, UI screenshots, video frames, and game screenshots.
+- Build a searchable private visual memory library on your own machine.
 
-1. Download MemeFinder-Setup.exe from Releases.
-2. Run the Setup and choose normal mode or portable mode.
-3. On first launch, choose a language in the bilingual “请选择语言 / Please choose a language” window.
-4. Open Settings > Search Scope and add image folders plus blacklist folders.
-5. Go to Batch Tagging and build the local DATA library.
-6. Search from the home page or advanced search using text, objects, meaning, visual clues, or notes.
-7. Use Manual Tagging to refine important images.
+## Privacy note
 
-## Build from source
-
-    py -3.10 -m pip install -r requirements.txt
-    .\build.ps1
-    .\build_setup.ps1
-
-The release installer is generated at:
-
-    release\MemeFinder-Setup.exe
+MemeFinder builds its DATA locally by default. OCR, manual tagging, and search can run on your own machine. Images are sent to an external service only if you explicitly enable and configure a vision API endpoint.
 
 </details>
 
 ---
 
-## Release Asset
+## Download / 下载
 
-The Setup installer is published as a GitHub Release asset:
+Download the latest installer from the Release page:
 
-    MemeFinder-Setup.exe
+[MemeFinder-Setup.exe](https://github.com/Iraryi/MemeFinder/releases/latest/download/MemeFinder-Setup.exe)
+
+## Build from source / 从源码构建
+
+    py -3.10 -m pip install -r requirements.txt
+    .\build.ps1
+    .\build_setup.ps1
+
+Generated installer:
+
+    release\MemeFinder-Setup.exe
 
